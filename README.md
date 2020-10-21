@@ -1,7 +1,7 @@
 # Shopping Cart Tool
 
-<!-- # Live Demo on Heroku:
-[nodejs-shopping-cart.herokuapp.com](https://nodejs-shopping-cart.herokuapp.com/) -->
+# Live Demo on Heroku:
+[https://shopping-cart-tool.herokuapp.com/](https://shopping-cart-tool.herokuapp.com/)
 
 ### Run Locally on Your Machine
 You need Node, NPM and MongoDB properly installed.
