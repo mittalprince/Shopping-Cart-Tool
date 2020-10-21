@@ -11,8 +11,10 @@ var csrfProtection = csrf()
 router.use(csrfProtection)
 
 
-router.post("/removeUser", function (req, res, next){
-  User.findOneAndRemove({ email: req.user.email }, function (err, success){
+router.post("/removeUser", function (req, res, next)
+{
+  User.findOneAndRemove({ email: req.user.email }, function (err, success)
+  {
     if (err) {
       console.log(err.message)
       req.flash("error", "Unable to process remove user request")
@@ -25,11 +27,13 @@ router.post("/removeUser", function (req, res, next){
 })
 
 
-router.get("/profile", isLoggedIn, function (req, res, next){
+router.get("/profile", isLoggedIn, function (req, res, next)
+{
   Order.find({
-      user: req.user
-    },
-    function (err, orders){
+    user: req.user
+  },
+    function (err, orders)
+    {
       if (err) {
         return res.write("Error!")
       }
@@ -48,7 +52,8 @@ router.get("/profile", isLoggedIn, function (req, res, next){
   )
 })
 
-router.post("/profile", function (req, res, next){
+router.post("/profile", function (req, res, next)
+{
   if (req.body.email) {
     User.findOne(
       {
@@ -84,12 +89,13 @@ router.post("/profile", function (req, res, next){
   res.end()
 })
 
-router.get("/logout", isLoggedIn, function (req, res, next){
+router.get("/logout", isLoggedIn, function (req, res, next)
+{
   req.logout()
-  res.redirect("/")
+  res.redirect("/user/signin")
 })
 
-router.get("/signup", function (req, res, next){
+router.get("/signup", notLoggedIn, function (req, res, next){
   var messages = req.flash("error")
   res.render("user/signup", {
     csrfToken: req.csrfToken(),
@@ -99,10 +105,11 @@ router.get("/signup", function (req, res, next){
 })
 
 router.post("/signup", passport.authenticate("local.signup", {
-    failureRedirect: "/user/signup",
-    failureFlash: true
-  }),
-  function (req, res, next){
+  failureRedirect: "/user/signup",
+  failureFlash: true
+}),
+  function (req, res, next)
+  {
     if (req.session.oldUrl) {
       var oldUrl = req.session.oldUrl
       req.session.oldUrl = null
@@ -113,7 +120,7 @@ router.post("/signup", passport.authenticate("local.signup", {
   }
 )
 
-router.get("/signin", function (req, res, next){
+router.get("/signin", notLoggedIn, function (req, res, next){
   var messages = req.flash("error")
   res.render("user/signin", {
     csrfToken: req.csrfToken(),
@@ -123,10 +130,11 @@ router.get("/signin", function (req, res, next){
 })
 
 router.post("/signin", passport.authenticate("local.signin", {
-    failureRedirect: "/user/signin",
-    failureFlash: true
-  }),
-  function (req, res, next){
+  failureRedirect: "/user/signin",
+  failureFlash: true
+}),
+  function (req, res, next)
+  {
     if (req.session.oldUrl) {
       var oldUrl = req.session.oldUrl
       req.session.oldUrl = null

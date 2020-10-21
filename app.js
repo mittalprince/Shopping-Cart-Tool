@@ -1,5 +1,3 @@
-const dotenv = require('dotenv').config();
-
 var express = require("express")
 var path = require("path")
 var favicon = require("serve-favicon")
@@ -15,11 +13,11 @@ var validator = require("express-validator")
 var MongoStore = require("connect-mongo")(session)
 
 var routes = require("./routes/index")
-var userRoutes = require("./routes/users")
+var userRoutes = require("./routes/user")
 
 var app = express()
 
-const mongo_uri = process.env.mongo_uri;
+const mongo_uri = "mongodb+srv://mittalprince:Prince@25@cluster0.6wzw1.mongodb.net/Cluster0?retryWrites=true&w=majority";
 const connect = mongoose.connect(mongo_uri, { useUnifiedTopology: true, useNewUrlParser: true});
 connect.then((db)=>{
     console.log("Database Connected Successfully");
@@ -39,8 +37,6 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(validator())
 app.use(cookieParser())
-
-
 app.use(
   session({
     secret: "mysupersecret",
@@ -50,7 +46,6 @@ app.use(
     cookie: { maxAge: 180 * 60 * 1000 }
   })
 )
-
 app.use(flash())
 app.use(passport.initialize())
 app.use(passport.session())
@@ -72,9 +67,10 @@ app.use(function(req, res, next) {
   next(err)
 })
 
-// error handlers -------------------
+// error handlers
 
 // development error handler
+// will print stacktrace
 if (app.get("env") === "development") {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500)
@@ -86,6 +82,7 @@ if (app.get("env") === "development") {
 }
 
 // production error handler
+// no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500)
   res.render("error", {

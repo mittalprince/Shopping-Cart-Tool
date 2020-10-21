@@ -7,9 +7,9 @@ var Product = require("../models/product")
 var Order = require("../models/order")
 
 /* GET home page. */
-router.get("/", function (req, res, next){
+router.get("/", function(req, res, next) {
   var successMsg = req.flash("success")[0]
-  Product.find(function (err, docs){
+  Product.find(function(err, docs) {
     var productChunks = []
     var chunkSize = 3
     for (var i = 0; i < docs.length; i += chunkSize) {
@@ -26,9 +26,9 @@ router.get("/", function (req, res, next){
 
 
 
-//API to show Cart Info-------------------------------
 
-router.get("/shopping-cart", function (req, res, next){
+
+router.get("/shopping-cart", function(req, res, next) {
   if (!req.session.cart) {
     return res.render("shop/shopping-cart", {
       products: null
@@ -45,9 +45,8 @@ router.get("/shopping-cart", function (req, res, next){
 
 
 
-// API to retrieve and post check-out information------------
 
-router.get("/checkout", isLoggedIn, function (req, res, next){
+router.get("/checkout", isLoggedIn, function(req, res, next) {
   if (!req.session.cart) {
     return res.redirect("/shopping-cart")
   }
@@ -60,7 +59,7 @@ router.get("/checkout", isLoggedIn, function (req, res, next){
   })
 })
 
-router.post("/checkout", isLoggedIn, function (req, res, next){
+router.post("/checkout", isLoggedIn, function(req, res, next) {
   if (!req.session.cart) {
     return res.redirect("/shopping-cart")
   }
@@ -68,13 +67,14 @@ router.post("/checkout", isLoggedIn, function (req, res, next){
 
   var stripe = require("stripe")("sk_test_bgBdBuFAydIEVdepmjpaJKUy")
 
-  stripe.charges.create({
+  stripe.charges.create(
+    {
       amount: cart.totalPrice * 100,
       currency: "usd",
       source: req.body.stripeToken, // obtained with Stripe.js
       description: "Test Charge"
     },
-    function (err, charge){
+    function(err, charge) {
       if (err) {
         req.flash("error", "We were unable to finalize your purchase!")
         return res.redirect("/checkout")
@@ -86,7 +86,7 @@ router.post("/checkout", isLoggedIn, function (req, res, next){
         name: req.body.name,
         paymentId: charge.id
       })
-      order.save(function (err, result){
+      order.save(function(err, result) {
         req.flash("success", "Purchase successful!")
         req.session.cart = null
         res.redirect("/")
@@ -102,13 +102,12 @@ router.post("/checkout", isLoggedIn, function (req, res, next){
 
 
 
-// API to add remove items in cart------------------------
 
-router.get("/add-to-cart/:id", function (req, res, next){
+router.get("/add-to-cart/:id", function(req, res, next) {
   var productId = req.params.id
   var cart = new Cart(req.session.cart ? req.session.cart : {})
 
-  Product.findById(productId, function (err, product){
+  Product.findById(productId, function(err, product) {
     if (err) {
       return res.redirect("/")
     }
@@ -118,7 +117,7 @@ router.get("/add-to-cart/:id", function (req, res, next){
   })
 })
 
-router.get("/reduce/:id", function (req, res, next){
+router.get("/reduce/:id", function(req, res, next) {
   var productId = req.params.id
   var cart = new Cart(req.session.cart ? req.session.cart : {})
 
@@ -127,7 +126,7 @@ router.get("/reduce/:id", function (req, res, next){
   res.redirect("/shopping-cart")
 })
 
-router.get("/remove/:id", function (req, res, next){
+router.get("/remove/:id", function(req, res, next) {
   var productId = req.params.id
   var cart = new Cart(req.session.cart ? req.session.cart : {})
 
@@ -139,7 +138,7 @@ router.get("/remove/:id", function (req, res, next){
 
 module.exports = router
 
-function isLoggedIn(req, res, next){
+function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next()
   }
